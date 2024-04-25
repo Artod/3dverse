@@ -228,6 +228,12 @@ app.get('/files/transform/:fileName', (req: Request, res: Response): void => {
     // Path to the large file
     const filePath: string = path.join('files', baseFileName);
 
+    // Check if the file exists
+    if (!fs.existsSync(filePath)) {
+        res.status(404).send('File not found');
+        return;
+    }
+
     // Set headers for streaming and downloading
     if (plain) {
         res.setHeader('Content-Type', 'text/plain');
@@ -235,7 +241,6 @@ app.get('/files/transform/:fileName', (req: Request, res: Response): void => {
         res.setHeader('Content-Type', 'application/octet-stream');
         res.setHeader('Content-Disposition', 'attachment; filename="transformed.obj"');
     }
-
 
     // Create a read stream
     const readStream: Readable = fs.createReadStream(filePath);
